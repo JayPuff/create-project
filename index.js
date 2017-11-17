@@ -129,6 +129,12 @@ function initGit() {
 }
 
 
+//https://stackoverflow.com/questions/2423777/is-it-possible-to-create-a-remote-repo-on-github-from-the-cli-without-opening-br/10325316#10325316
+// Use API to to create repository optionally??
+// Can I try to fetch token/user from node env variables ?
+
+
+
 function openEditor() {
     exec('code ' + path + "/" + name, (err, stdout, stderr) => {
         if (err) {
