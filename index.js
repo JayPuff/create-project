@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 var program = require('commander');
 var chalk = require('chalk');
 var fs = require("fs-extra");
@@ -152,12 +152,40 @@ function openEditor() {
 function beginServer() {
     exec('start cmd @cmd /k nodemon ' + path + "/" + name + "/server.js", (err, stdout, stderr) => {
         if (err) {
-            console.log(chalk.hex('#9e3952')('Could not open Editor (Do you have the editor command in PATH?)'));
+            console.log(chalk.hex('#9e3952')('Could not start server with nodemon, retrying regularly.'));
+            beginRegularServer();
             return;
         }
     
         console.log(chalk.hex('#bada55')('> Launched Server!'));
         
+        launchBrowser();
+    }); 
+}
+
+function beginRegularServer() {
+    exec('start cmd @cmd /k node ' + path + "/" + name + "/server.js ", (err, stdout, stderr) => {
+        if (err) {
+            console.log(chalk.hex('#9e3952')('Could not start server!'));
+            return;
+        }
+    
+        console.log(chalk.hex('#bada55')('> Launched Server!'));
+        
+        setTimeout(launchBrowser,1000);
+    }); 
+}
+
+
+
+function launchBrowser() {
+    exec('start chrome http://localhost:8000', (err, stdout, stderr) => {
+        if (err) {
+            console.log(chalk.hex('#9e3952')('Could not open browser'));
+            return;
+        }
+    
+        console.log(chalk.hex('#bada55')('> Launched Browser!'));
     }); 
 }
 
