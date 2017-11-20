@@ -143,6 +143,21 @@ function openEditor() {
         }
     
         console.log(chalk.hex('#bada55')('> Launched Project in editor!'));
+
+        beginServer();
+    }); 
+}
+
+
+function beginServer() {
+    exec('start cmd @cmd /k nodemon ' + path + "/" + name + "/server.js", (err, stdout, stderr) => {
+        if (err) {
+            console.log(chalk.hex('#9e3952')('Could not open Editor (Do you have the editor command in PATH?)'));
+            return;
+        }
+    
+        console.log(chalk.hex('#bada55')('> Launched Server!'));
+        
     }); 
 }
 
