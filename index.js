@@ -24,6 +24,7 @@ program
     .option('-h, --home', "I'm at home")
     .option('-r, --research', "It's research")
     .option('-w, --work', "I'm at work")
+    .option('-t, --type <n>', 'which project type?')
     .action(function(project) {
         name = project;
         research = program.research;
@@ -76,15 +77,16 @@ getTemplate();
 
 
 function getTemplate() {
-    exec('cd ' + path + "/" + name + ' && git clone https://github.com/JayPuff/node-server-template.git', (err, stdout, stderr) => {
+    exec('cd ' + path + "/" + name + ' && git clone ' + ((program.type == 'webpack') ? 'https://ChocoMilkPlz@bitbucket.org/ChocoMilkPlz/webpack-project.git' : 'https://github.com/JayPuff/node-server-template.git'), (err, stdout, stderr) => {
         if (err) {
+            console.log(err);
             console.log(chalk.hex('#9e3952')('Could not clone project template, is git setup properly?'));
             return;
         }
     
         console.log(chalk.hex('#bada55')('> Cloned Project Template'));
 
-        fs.copy(path + "/" + name + "/" + "node-server-template" , path + "/" + name, function (err) {
+        fs.copy(path + "/" + name + "/" + ((program.type == 'webpack') ? "webpack-project" : "node-server-template") , path + "/" + name, function (err) {
             if (err) {
                 console.log(chalk.hex('#9e3952')('Could not copy files to destination directory'));
                 return; 
@@ -92,7 +94,7 @@ function getTemplate() {
             console.log(chalk.hex('#bada55')('> Copied cloned files successfully'));
 
             fs.removeSync(path + "/" + name + "/.git");
-            fs.removeSync(path + "/" + name + "/node-server-template");
+            fs.removeSync(path + "/" + name + ((program.type == 'webpack') ? "/webpack-project" : "/node-server-template"));
 
             npmInstall();
 
@@ -136,7 +138,7 @@ function initGit() {
 
 
 function openEditor() {
-    exec('code ' + path + "/" + name, (err, stdout, stderr) => {
+    exec('code ' + path + "/" + name + ((program.type == 'webpack') ? " " + path + "/" + name + '/src/app.js' : ''), (err, stdout, stderr) => {
         if (err) {
             console.log(chalk.hex('#9e3952')('Could not open Editor (Do you have the editor command in PATH?)'));
             return;
@@ -144,8 +146,22 @@ function openEditor() {
     
         console.log(chalk.hex('#bada55')('> Launched Project in editor!'));
 
-       // beginServer();
+        if(program.type == "webpack") {
+            beginWebPackServer();
+        }
     }); 
+}
+
+
+function beginWebPackServer() {
+    exec('start cmd.exe @cmd /k "cd ' + path + "/" + name + ' && npm start"', (err, stdout, stderr) => {
+        if (err) {
+            console.log(chalk.hex('#9e3952')('Could not run npm start command'));
+            return;
+        }
+    
+        console.log(chalk.hex('#bada55')('> Running npm start command from project.'));
+    });
 }
 
 
