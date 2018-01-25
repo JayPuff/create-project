@@ -104,7 +104,7 @@ function getTemplate() {
 }
 
 function npmInstall() {
-    exec('cd ' + path + "/" + name + ' && npm install', (err, stdout, stderr) => {
+    exec('cd ' + path + "/" + name + ' && npm install --no-optional', (err, stdout, stderr) => {
         if (err) {
             console.log(chalk.hex('#9e3952')('Could not npm install dependencies, do you have npm installed?'));
             return;
